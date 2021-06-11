@@ -14,7 +14,7 @@ while getopts ":a:r:b:p:h" o; do case "${o}" in
 	*) printf "Invalid option: -%s\\n" "$OPTARG" && exit 1 ;;
 esac done
 
-[ -z "$dotfilesrepo" ] && dotfilesrepo="https://github.com/kjk11/voidrice"
+[ -z "$dotfilesrepo" ] && dotfilesrepo="https://github.com/kjk11/voidrice.git"
 [ -z "$progsfile" ] && progsfile="https://github.com/kjk11/LARBS/blob/master/progs.csv"
 [ -z "$aurhelper" ] && aurhelper="yay"
 [ -z "$repobranch" ] && repobranch="master"
@@ -127,7 +127,7 @@ installationloop() { \
 	done < /tmp/progs.csv ;}
 
 putgitrepo() { # Downloads a gitrepo $1 and places the files in $2 only overwriting conflicts
-	dialog --infobox "Downloading and installing config files..." 4 60
+	dialog --infobox "Downloading and installing files..." 4 60
 	[ -z "$3" ] && branch="master" || branch="$repobranch"
 	dir=$(mktemp -d)
 	[ ! -d "$2" ] && mkdir -p "$2"
@@ -213,6 +213,9 @@ https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA \"~
 https://www.archlinux.org/feeds/news/" > "/home/$name/.config/newsboat/urls"
 # make git ignore deleted LICENSE & README.md files
 git update-index --assume-unchanged "/home/$name/README.md" "/home/$name/LICENSE" "/home/$name/FUNDING.yml"
+
+# Download a local copy of larbs
+putgitrepo "https://github.com/kjk11/LARBS.git" "/home/$name/larbs" "master"
 
 # Most important command! Get rid of the beep!
 systembeepoff
