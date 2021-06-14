@@ -190,7 +190,7 @@ grep -q "^Color" /etc/pacman.conf || sed -i "s/^#Color$/Color/" /etc/pacman.conf
 grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
 
 # Install blackarch
-curl -O https://blackarch.org/strap.sh && echo 95b485d400f5f289f7613fe576f4a3996aabed62 strap.sh | sha1sum -c | chmod +x strap.sh | sudo ./strap.sh && sudo sudo sed -i -e '/\[multilib\]/s/^#//' -e '/Include \= \/etc\/pacman.d\/mirrorlist/s/^#//' /etc/pacman.conf && sudo pacman -Syu | rm strap.sh
+curl -O https://blackarch.org/strap.sh && echo 95b485d400f5f289f7613fe576f4a3996aabed62 strap.sh | sha1sum -c | chmod +x strap.sh | sudo ./strap.sh && sudo sudo sed -i -e '/\[multilib\]/s/^#//' -e '/\[multilib\]/a Include = /etc/pacman.d/mirrorlist' /etc/pacman.conf && sudo pacman -Syu | rm strap.sh
 
 # Use all cores for compilation.
 sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
