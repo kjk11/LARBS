@@ -195,7 +195,7 @@ sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
 manualinstall $aurhelper || error "Failed to install AUR helper."
 
 # Install blackarch
-curl -O https://blackarch.org/strap.sh && echo 95b485d400f5f289f7613fe576f4a3996aabed62 strap.sh | sha1sum -c | chmod +x strap.sh | sudo ./strap.sh && sudo sudo sed -i -e '/\[multilib\]/s/^#//' -e '/Include \= \/etc\/pacman.d\/mirrorlist/s/^#//' /etc/pacman.conf && sudo pacman -Syu
+curl -O https://blackarch.org/strap.sh && echo 95b485d400f5f289f7613fe576f4a3996aabed62 strap.sh | sha1sum -c | chmod +x strap.sh | sudo ./strap.sh && sudo sudo sed -i -e '/\[multilib\]/s/^#//' -e '/Include \= \/etc\/pacman.d\/mirrorlist/s/^#//' /etc/pacman.conf && sudo pacman -Syu | rm strap.sh
 
 # The command that does all the installing. Reads the progs.csv file and
 # installs each needed program the way required. Be sure to run this only after
