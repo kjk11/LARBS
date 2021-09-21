@@ -26,7 +26,7 @@ installpkg(){ pacman --noconfirm --needed -S "$1" >/dev/null 2>&1 ;}
 error() { clear; printf "ERROR:\\n%s\\n" "$1" >&2; exit 1;}
 
 welcomemsg() { \
-	dialog --title "Welcome!" --msgbox "Welcome to Luke's Auto-Rice Bootstrapping Script!\\n\\nThis script will automatically install a fully-featured Linux desktop, which I use as my main machine.\\n\\n-Luke" 10 60
+	dialog --title "Welcome!" --msgbox "Welcome! This is a fork of Luke Smith's Auto-Rice Bootstrapping Script!\\n\\nI mainly use it for re-creating my personal setup, including my dotfiles, which are also forked from Luke's.\\n\\nThis script will automatically install a fully-featured Linux desktop." 10 80
 
 	dialog --colors --title "Important Note!" --yes-label "All ready!" --no-label "Return..." --yesno "Be sure the computer you are using has current pacman updates and refreshed Arch keyrings.\\n\\nIf it does not, the installation of some programs might fail." 8 70
 	}
@@ -190,7 +190,7 @@ grep -q "^Color" /etc/pacman.conf || sed -i "s/^#Color$/Color/" /etc/pacman.conf
 grep -q "ILoveCandy" /etc/pacman.conf || sed -i "/#VerbosePkgLists/a ILoveCandy" /etc/pacman.conf
 
 # Install blackarch
-curl -O https://blackarch.org/strap.sh && echo 95b485d400f5f289f7613fe576f4a3996aabed62 strap.sh | sha1sum -c | chmod +x strap.sh | sudo ./strap.sh && sudo sudo sed -i -e '/\[multilib\]/s/^#//' -e '/\[multilib\]/a Include = /etc/pacman.d/mirrorlist' /etc/pacman.conf && sudo pacman -Syu | rm strap.sh
+curl -O https://blackarch.org/strap.sh && echo 95b485d400f5f289f7613fe576f4a3996aabed62 strap.sh | sha1sum -c | chmod +x strap.sh | sudo ./strap.sh && sudo sudo sed -i -e '/\[multilib\]/s/^#//' -e '/\[multilib\]/a Include = /etc/pacman.d/mirrorlist' /etc/pacman.conf && sudo pacman -Syu >/dev/null 2>&1 | rm strap.sh
 
 # Use all cores for compilation.
 sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
@@ -203,22 +203,28 @@ manualinstall $aurhelper || error "Failed to install AUR helper."
 # and all build dependencies are installed.
 installationloop
 
+# Make sure the correct torrc file is used
+rm /etc/tor/torrc
+ln -s /home/$name/.config/tor/torrc /etc/tor/torrc
+
 dialog --title "LARBS Installation" --infobox "Finally, installing \`libxft-bgra\` to enable color emoji in suckless software without crashes." 5 70
 yes | sudo -u "$name" $aurhelper -S libxft-bgra-git >/dev/null 2>&1
 
 # Install the dotfiles in the user's home directory
 putgitrepo "$dotfilesrepo" "/home/$name" "$repobranch"
 rm -f "/home/$name/README.md" "/home/$name/LICENSE" "/home/$name/FUNDING.yml"
-# Create default urls file if none exists.
-[ ! -f "/home/$name/.config/newsboat/urls" ] && echo "http://lukesmith.xyz/rss.xml
-https://notrelated.libsyn.com/rss
-https://www.youtube.com/feeds/videos.xml?channel_id=UC2eYFnH61tmytImy1mTYvhA \"~Luke Smith (YouTube)\"
-https://www.archlinux.org/feeds/news/" > "/home/$name/.config/newsboat/urls"
+
 # make git ignore deleted LICENSE & README.md files
 git update-index --assume-unchanged "/home/$name/README.md" "/home/$name/LICENSE" "/home/$name/FUNDING.yml"
 
 # Download a local copy of larbs
 putgitrepo "https://github.com/kjk11/LARBS.git" "/home/$name/larbs" "master"
+
+# Download a local copy of dwm
+putgitrepo "https://github.com/kjk11/dwm" "/home/$name/dwm" "master"
+
+# Download local copy of dwmblocks
+putgitrepo "https://github.com/kjk11/dwmblocks" "/home/$name/dwmblocks" "master"
 
 # Most important command! Get rid of the beep!
 systembeepoff
